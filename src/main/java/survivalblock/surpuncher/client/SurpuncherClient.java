@@ -6,6 +6,5 @@ public class SurpuncherClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
     }
 }

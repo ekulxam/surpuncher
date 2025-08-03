@@ -2,14 +2,23 @@ package survivalblock.surpuncher.common.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
-public class ExtendingFist {
+public class ExtendingFist implements GeoAnimatable {
 
     public static final Codec<ExtendingFist> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
@@ -25,6 +34,8 @@ public class ExtendingFist {
 
     public static final Codec<List<ExtendingFist>> LIST_CODEC = CODEC.listOf();
 
+    protected final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     protected final int maxLife;
     protected int life = 0;
     protected Vec3d velocity;
@@ -35,7 +46,7 @@ public class ExtendingFist {
     protected int color;
 
     public ExtendingFist(Vec3d velocity, Vec3d pos, float pitch, float yaw) {
-        this(velocity, pos, pitch, yaw, 0xFFFF0000);
+        this(velocity, pos, pitch, yaw, DyedColorComponent.DEFAULT_COLOR);
     }
 
     public ExtendingFist(Vec3d velocity, Vec3d pos, float pitch, float yaw, int color) {
@@ -73,5 +84,26 @@ public class ExtendingFist {
 
     public Vec3d lerpPos(float delta) {
         return MathHelper.lerp(delta, this.prevPos, this.pos);
+    }
+
+    public int getColor(int alpha) {
+        return ColorHelper.withAlpha(alpha, this.color);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar registrar) {
+        AnimationController<ExtendingFist> animController = new AnimationController<>("default", 5, event -> PlayState.STOP);
+
+        registrar.add(animController);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    @Override
+    public double getTick(@Nullable Object object) {
+        return this.life;
     }
 }

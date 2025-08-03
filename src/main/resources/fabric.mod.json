@@ -23,7 +23,7 @@
 			"survivalblock.surpuncher.client.SurpuncherClient"
 		],
 		"fabric-datagen": [
-			"survivalblock.surpuncher.SurpuncherDataGenerator"
+			"survivalblock.surpuncher.common.datagen.SurpuncherDataGenerator"
 		],
 		"cardinal-components-entity": [
 			"survivalblock.surpuncher.common.init.SurpuncherEntityComponents"
