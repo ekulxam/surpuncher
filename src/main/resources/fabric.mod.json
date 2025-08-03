@@ -1,0 +1,49 @@
+{
+	"schemaVersion": 1,
+	"id": "surpuncher",
+	"version": "${version}",
+	"name": "Surpuncher",
+	"description": "boing",
+	"authors": [
+		"Survivalblock"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/surpuncher",
+		"sources": "https://github.com/ekulxam/surpuncher",
+		"issues": "https://github.com/ekulxam/surpuncher/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/surpuncher/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"survivalblock.surpuncher.common.Surpuncher"
+		],
+		"client": [
+			"survivalblock.surpuncher.client.SurpuncherClient"
+		],
+		"fabric-datagen": [
+			"survivalblock.surpuncher.SurpuncherDataGenerator"
+		],
+		"cardinal-components-entity": [
+			"survivalblock.surpuncher.common.init.SurpuncherEntityComponents"
+		]
+	},
+	"mixins": [
+		"surpuncher.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.8",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"custom": {
+		"cardinal-components": [
+			"surpuncher:extending_fist"
+		],
+		"loom:injected_interfaces": {
+			"net/minecraft/class_10034": ["survivalblock/surpuncher/client/render/injected_interface/FuryFists"]
+		}
+	}
+}

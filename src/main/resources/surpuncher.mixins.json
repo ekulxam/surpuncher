@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "survivalblock.surpuncher.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "client.LivingEntityRendererMixin",
+    "client.BipedEntityRenderStateMixin",
+    "client.PlayerEntityRendererMixin"
+  ]
+}
