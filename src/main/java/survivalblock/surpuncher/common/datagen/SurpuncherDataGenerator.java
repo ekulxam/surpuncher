@@ -2,6 +2,9 @@ package survivalblock.surpuncher.common.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.registry.RegistryBuilder;
+import net.minecraft.registry.RegistryKeys;
+import survivalblock.surpuncher.common.init.SurpuncherEnchantments;
 
 public class SurpuncherDataGenerator implements DataGeneratorEntrypoint {
 
@@ -10,5 +13,12 @@ public class SurpuncherDataGenerator implements DataGeneratorEntrypoint {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(SurpuncherModelGenerator::new);
 		pack.addProvider(SurpuncherEnUsLangGenerator::new);
+		pack.addProvider(SurpuncherTagGenerators.ItemGenerator::new);
+		pack.addProvider(SurpuncherEnchantmentGenerator::new);
+	}
+
+	@Override
+	public void buildRegistry(RegistryBuilder registryBuilder) {
+		registryBuilder.addRegistry(RegistryKeys.ENCHANTMENT, SurpuncherEnchantments::bootstrap);
 	}
 }

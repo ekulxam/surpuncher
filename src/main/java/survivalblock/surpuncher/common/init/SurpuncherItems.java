@@ -13,6 +13,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import survivalblock.surpuncher.common.Surpuncher;
+import survivalblock.surpuncher.common.component.ExtendingFist;
 import survivalblock.surpuncher.common.item.ExtendingFistItem;
 
 import java.util.function.Function;
@@ -21,11 +22,14 @@ import static net.minecraft.component.DataComponentTypes.DYED_COLOR;
 
 public class SurpuncherItems {
 
+    public static final DyedColorComponent DEFAULT_DYE_COMPONENT = new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR);
+
     public static final ExtendingFistItem EXTENDING_FIST = registerItem(
             "extending_fist",
             new Item.Settings()
                     .maxCount(1)
                     .rarity(Rarity.UNCOMMON)
+                    .useCooldown((int) (0.05 * ExtendingFist.DEFAULT_MAX_LIFE))
                     .attributeModifiers(AttributeModifiersComponent.builder()
                             .add(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND).build())
                     .component(DYED_COLOR, new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR)),

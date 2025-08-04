@@ -2,16 +2,26 @@ package survivalblock.surpuncher.common.component;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 import survivalblock.surpuncher.common.init.SurpuncherEntityComponents;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExtendingFistComponent implements CommonTickingComponent, AutoSyncedComponent {
 
@@ -37,8 +47,36 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                 this.markDirty();
             }
         }
-        if (!world.isClient() && this.dirty) {
-            SurpuncherEntityComponents.EXTENDING_FIST.sync(this.obj);
+        if (world instanceof ServerWorld serverWorld) {
+            Vec3d pos = this.obj.getPos();
+            Map<Box, ExtendingFist> boxes = new HashMap<>();
+            this.fists.forEach(extendingFist ->
+                    boxes.put(extendingFist.getHitbox(pos), extendingFist)
+            );
+            serverWorld.iterateEntities().forEach(entity -> {
+                Box entityBox = entity.getBoundingBox();
+                for (Map.Entry<Box, ExtendingFist> entry : boxes.entrySet()) {
+                    if (!entry.getKey().intersects(entityBox)) {
+                        continue;
+                    }
+                    Vec3d velocity = entry.getValue().getVelocity();
+                    entity.setVelocity(velocity);
+                    if (!(entity instanceof ServerPlayerEntity serverPlayer)) {
+                        continue;
+                    }
+                    serverPlayer.networkHandler
+                            .sendPacket(new EntityVelocityUpdateS2CPacket(
+                                    serverPlayer.getId(),
+                                    velocity)
+                            );
+                }
+            });
+        }
+        if (this.dirty) {
+            this.dirty = false;
+            if (!world.isClient()) {
+                SurpuncherEntityComponents.EXTENDING_FIST.sync(this.obj);
+            }
         }
     }
 
@@ -61,5 +99,11 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
 
     public List<ExtendingFist> getImmutableFists() {
         return ImmutableList.copyOf(this.fists);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean add(@NotNull ExtendingFist fist) {
+        this.markDirty();
+        return this.fists.add(fist);
     }
 }
