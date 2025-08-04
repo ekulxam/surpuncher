@@ -1,6 +1,7 @@
 package survivalblock.surpuncher.common.component;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,11 +18,9 @@ import survivalblock.surpuncher.common.init.SurpuncherEntityComponents;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExtendingFistComponent implements CommonTickingComponent, AutoSyncedComponent {
 
@@ -54,6 +53,9 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                     boxes.put(extendingFist.getHitbox(pos), extendingFist)
             );
             serverWorld.iterateEntities().forEach(entity -> {
+                if (!(entity instanceof LivingEntity)) {
+                    return;
+                }
                 Box entityBox = entity.getBoundingBox();
                 for (Map.Entry<Box, ExtendingFist> entry : boxes.entrySet()) {
                     if (!entry.getKey().intersects(entityBox)) {
