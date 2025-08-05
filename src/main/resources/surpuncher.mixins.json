@@ -11,8 +11,5 @@
     "requireAnnotations": true
   },
   "client": [
-    "client.LivingEntityRendererMixin",
-    "client.BipedEntityRenderStateMixin",
-    "client.PlayerEntityRendererMixin"
   ]
 }

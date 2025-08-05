@@ -1,7 +1,6 @@
 package survivalblock.surpuncher.common.item;
 
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,12 +12,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.function.TriConsumer;
 import survivalblock.surpuncher.common.component.ExtendingFist;
 import survivalblock.surpuncher.common.component.ExtendingFistComponent;
 import survivalblock.surpuncher.common.init.SurpuncherEnchantments;
 import survivalblock.surpuncher.common.init.SurpuncherEntityComponents;
 import survivalblock.surpuncher.common.init.SurpuncherItems;
+
+import static survivalblock.surpuncher.common.component.ExtendingFist.VELOCITY_MULTIPLIER;
 
 public class ExtendingFistItem extends Item {
 
@@ -45,15 +45,15 @@ public class ExtendingFistItem extends Item {
             if (flurry > 0) {
                 Random random = user.getRandom();
                 for (int i = 0; i < flurry + 1; i++) {
-                    Vec3d vec3d = velocity.addRandom(random, 0.04f).multiply(2);
+                    Vec3d vec3d = velocity.addRandom(random, 0.04f).multiply(VELOCITY_MULTIPLIER);
                     //noinspection SuspiciousNameCombination
-                    yaw = (float) MathHelper.atan2(vec3d.x, vec3d.z) * 180.0F / (float)Math.PI;
-                    pitch = (float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * 180.0F / (float)Math.PI);
-                    extendingFistComponent.add(new ExtendingFist(velocity, pitch, yaw, color));
+                    yaw = (float) MathHelper.atan2(vec3d.x, vec3d.z) * MathHelper.DEGREES_PER_RADIAN;
+                    pitch = (float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * MathHelper.DEGREES_PER_RADIAN);
+                    extendingFistComponent.add(new ExtendingFist(vec3d, pitch, yaw, color));
                 }
             } else {
                 extendingFistComponent.add(
-                        new ExtendingFist(velocity.multiply(2), pitch, yaw, color)
+                        new ExtendingFist(velocity.multiply(VELOCITY_MULTIPLIER), pitch, yaw, color)
                 );
             }
             return ActionResult.SUCCESS_SERVER;

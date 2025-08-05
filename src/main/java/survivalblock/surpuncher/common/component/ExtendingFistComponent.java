@@ -35,25 +35,28 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
 
     @Override
     public void tick() {
-        Iterator<ExtendingFist> itr = fists.iterator();
+        Iterator<ExtendingFist> itr = this.fists.iterator();
         World world = this.obj.getWorld();
         ExtendingFist fist;
         while (itr.hasNext()) {
             fist = itr.next();
-            boolean discard = itr.next().tick(this.obj, world);
+            boolean discard = fist.tick(this.obj, world);
             if (discard) {
-                this.fists.remove(fist);
+                itr.remove();
                 this.markDirty();
             }
         }
-        if (world instanceof ServerWorld serverWorld) {
-            Vec3d pos = this.obj.getPos();
+        if (world instanceof ServerWorld serverWorld && !this.fists.isEmpty()) {
+            Vec3d pos = this.obj.getEyePos();
             Map<Box, ExtendingFist> boxes = new HashMap<>();
             this.fists.forEach(extendingFist ->
                     boxes.put(extendingFist.getHitbox(pos), extendingFist)
             );
             serverWorld.iterateEntities().forEach(entity -> {
                 if (!(entity instanceof LivingEntity)) {
+                    return;
+                }
+                if (entity.equals(this.obj)) {
                     return;
                 }
                 Box entityBox = entity.getBoundingBox();

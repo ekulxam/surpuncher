@@ -43,7 +43,6 @@
 			"surpuncher:extending_fist"
 		],
 		"loom:injected_interfaces": {
-			"net/minecraft/class_10034": ["survivalblock/surpuncher/client/render/injected_interface/FuryFists"]
 		}
 	}
 }
