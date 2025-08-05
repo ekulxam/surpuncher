@@ -2,7 +2,9 @@ package survivalblock.surpuncher.common.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.ItemTags;
 import survivalblock.surpuncher.common.init.SurpuncherItems;
 import survivalblock.surpuncher.common.init.SurpuncherTags;
 
@@ -18,8 +20,10 @@ public class SurpuncherTagGenerators {
 
         @Override
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-            this.builder(SurpuncherTags.ItemTags.FIST_ENCHANTABLE)
-                    .add(SurpuncherItems.EXTENDING_FIST.getRegistryEntry().registryKey());
+            this.valueLookupBuilder(SurpuncherTags.ItemTags.FIST_ENCHANTABLE)
+                    .add(SurpuncherItems.EXTENDING_FIST);
+            this.valueLookupBuilder(ItemTags.DYEABLE)
+                    .add(SurpuncherItems.EXTENDING_FIST);
         }
     }
 }

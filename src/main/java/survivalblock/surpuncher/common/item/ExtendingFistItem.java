@@ -45,10 +45,10 @@ public class ExtendingFistItem extends Item {
             if (flurry > 0) {
                 Random random = user.getRandom();
                 for (int i = 0; i < flurry + 1; i++) {
-                    Vec3d vec3d = velocity.addRandom(random, 0.04f).multiply(VELOCITY_MULTIPLIER);
+                    Vec3d vec3d = velocity.addRandom(random, 0.075f).multiply(VELOCITY_MULTIPLIER);
                     //noinspection SuspiciousNameCombination
-                    yaw = (float) MathHelper.atan2(vec3d.x, vec3d.z) * MathHelper.DEGREES_PER_RADIAN;
-                    pitch = (float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * MathHelper.DEGREES_PER_RADIAN);
+                    yaw = -(float) MathHelper.atan2(vec3d.x, vec3d.z) * MathHelper.DEGREES_PER_RADIAN;
+                    pitch = -(float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * MathHelper.DEGREES_PER_RADIAN);
                     extendingFistComponent.add(new ExtendingFist(vec3d, pitch, yaw, color));
                 }
             } else {

@@ -29,7 +29,7 @@ public class SurpuncherItems {
             new Item.Settings()
                     .maxCount(1)
                     .rarity(Rarity.UNCOMMON)
-                    .useCooldown((int) (0.05 * ExtendingFist.DEFAULT_MAX_LIFE))
+                    .useCooldown(ExtendingFist.MAX_LIFE_SECONDS)
                     .attributeModifiers(AttributeModifiersComponent.builder()
                             .add(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND).build())
                     .component(DYED_COLOR, new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR)),

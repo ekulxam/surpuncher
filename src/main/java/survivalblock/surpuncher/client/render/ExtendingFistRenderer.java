@@ -2,6 +2,9 @@ package survivalblock.surpuncher.client.render;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
@@ -13,6 +16,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import survivalblock.surpuncher.common.Surpuncher;
 import survivalblock.surpuncher.common.component.ExtendingFist;
+import survivalblock.surpuncher.common.init.SurpuncherItems;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, GeoRenderState> {
@@ -32,6 +36,13 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         state.addGeckolibData(DataTickets.PACKED_LIGHT, light);
         defaultRender(state, matrices, vertexConsumers, null, null);
         matrices.pop();
+    }
+
+    public void renderFromStack(ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int light, float tickProgress) {
+        ExtendingFist fist = new ExtendingFist(Vec3d.ZERO, 0, 0, stack.getOrDefault(DataComponentTypes.DYED_COLOR,
+                        SurpuncherItems.DEFAULT_DYE_COMPONENT).rgb()
+        );
+        render(fist, matrices, vertexConsumerProvider, light, tickProgress);
     }
 
     public void applyEntityLikeTransforms(ExtendingFist fist, MatrixStack matrices, float tickProgress) {
