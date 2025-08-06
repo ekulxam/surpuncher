@@ -11,6 +11,7 @@ import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import survivalblock.surpuncher.client.render.ExtendingFistRenderer;
 import survivalblock.surpuncher.common.component.ExtendingFist;
@@ -56,11 +57,15 @@ public class SurpuncherClient implements ClientModInitializer {
                     matrices.pop();
                     if (dispatcher.shouldRenderHitboxes()) {
                         matrices.push();
+                        int color = ExtendingFistRenderer.INSTANCE.getRenderColor(fist, null, tickProgress);
                         Vec3d relativePos = fist.lerpPos(tickProgress);
                         matrices.translate(relativePos.x, relativePos.y, relativePos.z);
                         VertexConsumer lines = vertexConsumerProvider.getBuffer(RenderLayer.getLines());
                         VertexRendering.drawBox(
-                                matrices, lines, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, 0, 1, 0, 1
+                                matrices, lines,
+                                -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE,
+                                BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE,
+                                ColorHelper.getRed(color), ColorHelper.getGreen(color), ColorHelper.getBlue(color), ColorHelper.getAlpha(color)
                         );
                         matrices.pop();
                     }

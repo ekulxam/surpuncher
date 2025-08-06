@@ -4,9 +4,9 @@
 		{
 			"description": {
 				"identifier": "geometry.unknown",
-				"texture_width": 16,
-				"texture_height": 16,
-				"visible_bounds_width": 2,
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
 				"visible_bounds_height": 1.5,
 				"visible_bounds_offset": [0, 0.25, 0]
 			},
@@ -15,7 +15,9 @@
 					"name": "bb_main",
 					"pivot": [0, 0, 0],
 					"cubes": [
-						{"origin": [-2, 0, -2], "size": [4, 4, 4], "uv": [0, 0]}
+						{"origin": [-5, -5, -2], "size": [10, 10, 10], "uv": [0, 0]},
+						{"origin": [-5.5, -2, -8], "size": [11, 9, 5], "pivot": [5.5, 0, -6], "rotation": [-50, 0, 0], "uv": [0, 20]},
+						{"origin": [-5.25, -6, -3], "size": [10.5, 4, 5], "pivot": [5.25, -6, -3], "rotation": [40, 0, 0], "uv": [32, 20]}
 					]
 				}
 			]

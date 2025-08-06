@@ -18,8 +18,6 @@ import survivalblock.surpuncher.common.item.ExtendingFistItem;
 
 import java.util.function.Function;
 
-import static net.minecraft.component.DataComponentTypes.DYED_COLOR;
-
 public class SurpuncherItems {
 
     public static final DyedColorComponent DEFAULT_DYE_COMPONENT = new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR);
@@ -31,10 +29,18 @@ public class SurpuncherItems {
                     .rarity(Rarity.UNCOMMON)
                     .useCooldown(ExtendingFist.MAX_LIFE_SECONDS)
                     .attributeModifiers(AttributeModifiersComponent.builder()
-                            .add(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND).build())
-                    .component(DYED_COLOR, new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR)),
+                            .add(EntityAttributes.ATTACK_DAMAGE,
+                                    new EntityAttributeModifier(
+                                            Item.BASE_ATTACK_DAMAGE_MODIFIER_ID,
+                                            1,
+                                            EntityAttributeModifier.Operation.ADD_VALUE
+                                    ),
+                                    AttributeModifierSlot.MAINHAND)
+                            .build()
+                    ),
             ExtendingFistItem::new);
 
+    @SuppressWarnings("SameParameterValue")
     private static <T extends Item> T registerItem(String name, Item.Settings settings, Function<Item.Settings, T> itemFromSettings) {
         Identifier id = Surpuncher.id(name);
         return Registry.register(Registries.ITEM, id, itemFromSettings.apply(settings.registryKey(RegistryKey.of(RegistryKeys.ITEM, id))));

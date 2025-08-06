@@ -43,6 +43,7 @@
 			"surpuncher:extending_fist"
 		],
 		"loom:injected_interfaces": {
+			"net/minecraft/class_10444": ["survivalblock/surpuncher/client/render/injected_interface/FistItemRenderState"]
 		}
 	}
 }

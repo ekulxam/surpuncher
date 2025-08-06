@@ -24,7 +24,7 @@ public class ExtendingFist implements GeoAnimatable {
     public static final int DEFAULT_MAX_LIFE = 60;
     public static final float MAX_LIFE_SECONDS = 3;
     public static final double VELOCITY_MULTIPLIER = 1;
-    public static final double BOX_EXPAND_VALUE = 0.2;
+    public static final double BOX_EXPAND_VALUE = 0.4;
 
     public static final Codec<ExtendingFist> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(

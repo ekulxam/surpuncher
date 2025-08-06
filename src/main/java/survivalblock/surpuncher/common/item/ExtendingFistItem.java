@@ -38,9 +38,7 @@ public class ExtendingFistItem extends Item {
                             .getOrThrow(SurpuncherEnchantments.FLURRY),
                     stack);
             Vec3d velocity = Vec3d.fromPolar(pitch, yaw);
-            int color = stack.getOrDefault(DataComponentTypes.DYED_COLOR,
-                            SurpuncherItems.DEFAULT_DYE_COMPONENT)
-                    .rgb();
+            int color = getColor(stack);
             ExtendingFistComponent extendingFistComponent = SurpuncherEntityComponents.EXTENDING_FIST.get(user);
             if (flurry > 0) {
                 Random random = user.getRandom();
@@ -48,7 +46,7 @@ public class ExtendingFistItem extends Item {
                     Vec3d vec3d = velocity.addRandom(random, 0.075f).multiply(VELOCITY_MULTIPLIER);
                     //noinspection SuspiciousNameCombination
                     yaw = -(float) MathHelper.atan2(vec3d.x, vec3d.z) * MathHelper.DEGREES_PER_RADIAN;
-                    pitch = -(float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * MathHelper.DEGREES_PER_RADIAN);
+                    pitch = (float) (MathHelper.atan2(vec3d.y, vec3d.horizontalLength()) * MathHelper.DEGREES_PER_RADIAN);
                     extendingFistComponent.add(new ExtendingFist(vec3d, pitch, yaw, color));
                 }
             } else {
@@ -59,5 +57,11 @@ public class ExtendingFistItem extends Item {
             return ActionResult.SUCCESS_SERVER;
         }
         return ActionResult.SUCCESS;
+    }
+
+    public static int getColor(ItemStack stack) {
+        return stack.getOrDefault(DataComponentTypes.DYED_COLOR,
+                        SurpuncherItems.DEFAULT_DYE_COMPONENT)
+                .rgb();
     }
 }

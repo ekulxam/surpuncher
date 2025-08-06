@@ -22,5 +22,11 @@
 			}
 		}
 	],
-	"display": {}
+	"display": {
+		"gui": {
+			"rotation": [30, 135, 0],
+			"translation": [2, 2.25, 0],
+			"scale": [0.6, 0.6, 0.6]
+		}
+	}
 }
