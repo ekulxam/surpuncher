@@ -9,13 +9,17 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import survivalblock.surpuncher.client.render.ExtendingFistRenderer;
 import survivalblock.surpuncher.common.component.ExtendingFist;
 import survivalblock.surpuncher.common.init.SurpuncherEntityComponents;
+import survivalblock.surpuncher.common.init.SurpuncherItems;
+import survivalblock.surpuncher.common.item.ExtendingFistItem;
 
 import java.util.List;
 
@@ -74,5 +78,15 @@ public class SurpuncherClient implements ClientModInitializer {
             });
             matrices.pop();
         });
+    }
+
+    public static void updateFistState(ItemStack stack, ItemRenderState renderState) {
+        if (stack.isOf(SurpuncherItems.EXTENDING_FIST)) {
+            renderState.surpuncher$setShouldRenderFist(true);
+            renderState.surpuncher$setFistColor(ExtendingFistItem.getColor(stack));
+            return;
+        }
+        renderState.surpuncher$setShouldRenderFist(false);
+        renderState.surpuncher$setFistColor(0);
     }
 }

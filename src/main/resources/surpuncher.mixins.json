@@ -12,6 +12,7 @@
   },
   "client": [
     "client.ItemModelManagerMixin",
+    "client.ItemModelMixin",
     "client.ItemRenderStateAccessor",
     "client.ItemRenderStateAccessor$LayerRenderStateAccessor",
     "client.ItemRenderStateMixin"
