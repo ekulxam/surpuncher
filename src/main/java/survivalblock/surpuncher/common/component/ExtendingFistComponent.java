@@ -64,10 +64,10 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                 }
                 Box entityBox = entity.getBoundingBox();
                 for (Map.Entry<Box, ExtendingFist> entry : boxes.entrySet()) {
-                    entity.damage(serverWorld, playerAttack, 4);
                     if (!entry.getKey().intersects(entityBox)) {
                         continue;
                     }
+                    entity.damage(serverWorld, playerAttack, 4);
                     Vec3d velocity = entry.getValue().getVelocity();
                     entity.setVelocity(velocity);
                     if (!(entity instanceof ServerPlayerEntity serverPlayer)) {
