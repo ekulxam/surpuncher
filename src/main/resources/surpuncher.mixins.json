@@ -11,9 +11,12 @@
     "requireAnnotations": true
   },
   "client": [
+    "client.BipedEntityModelMixin",
+    "client.BipedEntityModelMixin$ArmPoseMixin",
     "client.ItemModelManagerMixin",
     "client.ItemRenderStateAccessor",
     "client.ItemRenderStateAccessor$LayerRenderStateAccessor",
-    "client.ItemRenderStateMixin"
+    "client.ItemRenderStateMixin",
+    "client.PlayerEntityRendererMixin"
   ]
 }
