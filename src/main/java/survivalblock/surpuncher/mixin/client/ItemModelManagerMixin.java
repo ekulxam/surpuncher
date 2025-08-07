@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import survivalblock.surpuncher.client.SurpuncherClient;
 
-@Debug(export = true)
 @Mixin(ItemModelManager.class)
 public class ItemModelManagerMixin {
 

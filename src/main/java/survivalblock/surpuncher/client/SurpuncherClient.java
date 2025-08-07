@@ -101,7 +101,6 @@ public class SurpuncherClient implements ClientModInitializer {
             renderState.surpuncher$setShouldRenderFist(renderFist);
             renderState.addModelKey(renderFist);
             if (renderFist) {
-                renderState.markAnimated();
                 int color = ExtendingFistItem.getColor(stack);
                 renderState.surpuncher$setFistColor(color);
                 renderState.addModelKey(color);

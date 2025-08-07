@@ -14,9 +14,7 @@
     "requireAnnotations": true
   },
   "client": [
-    "client.GuiRendererMixin",
     "client.ItemModelManagerMixin",
-    "client.ItemModelMixin",
     "client.ItemRenderStateAccessor",
     "client.ItemRenderStateAccessor$LayerRenderStateAccessor",
     "client.ItemRenderStateMixin"
