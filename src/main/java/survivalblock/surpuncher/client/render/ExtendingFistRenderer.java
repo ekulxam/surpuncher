@@ -78,7 +78,7 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         matrices.translate(relativePos.x, relativePos.y, relativePos.z);
         matrices.multiply(new Quaternionf()
                 .rotationYXZ(-fist.getYaw() * MathHelper.RADIANS_PER_DEGREE + MathHelper.PI, // rotate by an extra pi radians because the model is backwards
-                        fist.getPitch() * MathHelper.RADIANS_PER_DEGREE,
+                        -fist.getPitch() * MathHelper.RADIANS_PER_DEGREE,
                         0));
     }
 

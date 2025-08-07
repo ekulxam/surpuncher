@@ -71,7 +71,10 @@ public class SurpuncherClient implements ClientModInitializer {
                                 matrices, lines,
                                 -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE,
                                 BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE,
-                                ColorHelper.getRed(color), ColorHelper.getGreen(color), ColorHelper.getBlue(color), ColorHelper.getAlpha(color)
+                                ColorHelper.getRedFloat(color),
+                                ColorHelper.getGreenFloat(color),
+                                ColorHelper.getBlueFloat(color),
+                                ColorHelper.getAlphaFloat(color)
                         );
                         matrices.pop();
                     }
@@ -96,7 +99,15 @@ public class SurpuncherClient implements ClientModInitializer {
                 }
             }
             renderState.surpuncher$setShouldRenderFist(renderFist);
-            renderState.surpuncher$setFistColor(ExtendingFistItem.getColor(stack));
+            renderState.addModelKey(renderFist);
+            if (renderFist) {
+                renderState.markAnimated();
+                int color = ExtendingFistItem.getColor(stack);
+                renderState.surpuncher$setFistColor(color);
+                renderState.addModelKey(color);
+            } else {
+                renderState.surpuncher$setFistColor(0);
+            }
             return;
         }
         renderState.surpuncher$setShouldRenderFist(false);

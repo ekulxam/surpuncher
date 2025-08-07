@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 public class SurpuncherItems {
 
-    public static final DyedColorComponent DEFAULT_DYE_COMPONENT = new DyedColorComponent(DyedColorComponent.DEFAULT_COLOR);
+    public static final DyedColorComponent DEFAULT_DYE_COMPONENT = new DyedColorComponent(0xFFFFFF);
 
     public static final ExtendingFistItem EXTENDING_FIST = registerItem(
             "extending_fist",

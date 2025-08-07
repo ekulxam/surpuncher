@@ -2,6 +2,8 @@ package survivalblock.surpuncher.common.component;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -52,6 +54,7 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
             this.fists.forEach(extendingFist ->
                     boxes.put(extendingFist.getHitbox(pos), extendingFist)
             );
+            DamageSource playerAttack = serverWorld.getDamageSources().playerAttack(this.obj);
             serverWorld.iterateEntities().forEach(entity -> {
                 if (!(entity instanceof LivingEntity)) {
                     return;
@@ -61,6 +64,7 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                 }
                 Box entityBox = entity.getBoundingBox();
                 for (Map.Entry<Box, ExtendingFist> entry : boxes.entrySet()) {
+                    entity.damage(serverWorld, playerAttack, 4);
                     if (!entry.getKey().intersects(entityBox)) {
                         continue;
                     }
@@ -69,11 +73,9 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                     if (!(entity instanceof ServerPlayerEntity serverPlayer)) {
                         continue;
                     }
-                    serverPlayer.networkHandler
-                            .sendPacket(new EntityVelocityUpdateS2CPacket(
-                                    serverPlayer.getId(),
-                                    velocity)
-                            );
+                    serverPlayer.networkHandler.sendPacket(
+                            new EntityVelocityUpdateS2CPacket(serverPlayer)
+                    );
                 }
             });
         }
