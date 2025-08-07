@@ -10,13 +10,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import survivalblock.surpuncher.client.render.ExtendingFistRenderer;
 
 @Mixin(ItemModelManager.class)
 public class ItemModelManagerMixin {
 
     @Inject(method = "update", at = @At("HEAD"))
     private void updateFist(ItemRenderState renderState, ItemStack stack, ItemDisplayContext displayContext, World world, LivingEntity entity, int seed, CallbackInfo ci) {
-        ExtendingFistRenderer.updateFistState(stack, renderState, displayContext);
+        renderState.surpuncher$updateFistState(stack, displayContext);
     }
 }

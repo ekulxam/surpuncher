@@ -1,5 +1,8 @@
 package survivalblock.surpuncher.client.render.injected_interface;
 
+import net.minecraft.item.ItemDisplayContext;
+import net.minecraft.item.ItemStack;
+
 public interface FistItemRenderState {
 
     default boolean surpuncher$shouldRenderFist() {
@@ -15,6 +18,10 @@ public interface FistItemRenderState {
     }
 
     default void surpuncher$setFistColor(int color) {
+        throw new UnsupportedOperationException("Injected interface");
+    }
+
+    default void surpuncher$updateFistState(ItemStack stack, ItemDisplayContext displayContext) {
         throw new UnsupportedOperationException("Injected interface");
     }
 }

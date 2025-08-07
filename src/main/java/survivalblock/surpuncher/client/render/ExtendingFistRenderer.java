@@ -195,34 +195,6 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         matrices.pop();
     }
 
-    public static void updateFistState(ItemStack stack, ItemRenderState renderState, ItemDisplayContext displayContext) {
-        if (stack.isOf(SurpuncherItems.EXTENDING_FIST)) {
-            boolean renderFist;
-            if (displayContext == ItemDisplayContext.GUI) {
-                renderFist = true;
-            } else {
-                ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-                if (clientPlayer == null) {
-                    renderFist = true;
-                } else {
-                    renderFist = !clientPlayer.getItemCooldownManager().isCoolingDown(stack);
-                }
-            }
-            renderState.surpuncher$setShouldRenderFist(renderFist);
-            renderState.addModelKey(renderFist);
-            if (renderFist) {
-                int color = ExtendingFistItem.getColor(stack);
-                renderState.surpuncher$setFistColor(color);
-                renderState.addModelKey(color);
-            } else {
-                renderState.surpuncher$setFistColor(0);
-            }
-            return;
-        }
-        renderState.surpuncher$setShouldRenderFist(false);
-        renderState.surpuncher$setFistColor(0);
-    }
-
     public static Arm getArmHoldingRod(PlayerEntity player) {
         return player.getMainHandStack().isOf(SurpuncherItems.EXTENDING_FIST) ? player.getMainArm() : player.getMainArm().getOpposite();
     }
