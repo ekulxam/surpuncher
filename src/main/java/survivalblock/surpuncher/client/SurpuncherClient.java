@@ -66,6 +66,7 @@ public class SurpuncherClient implements ClientModInitializer {
                 Vec3d pos = player.getLerpedPos(tickProgress);
                 for (ExtendingFist fist : fists) {
                     matrices.push();
+                    int color = ExtendingFistRenderer.INSTANCE.getRenderColor(fist, null, tickProgress);
                     matrices.translate(pos.x, pos.y + player.getStandingEyeHeight(), pos.z);
                     {
                         matrices.push();
@@ -74,7 +75,6 @@ public class SurpuncherClient implements ClientModInitializer {
                         matrices.pop();
                         if (dispatcher.shouldRenderHitboxes()) {
                             matrices.push();
-                            int color = ExtendingFistRenderer.INSTANCE.getRenderColor(fist, null, tickProgress);
                             Vec3d relativePos = fist.lerpPos(tickProgress);
                             matrices.translate(relativePos.x, relativePos.y, relativePos.z);
                             VertexConsumer lines = vertexConsumerProvider.getBuffer(RenderLayer.getLines());
@@ -98,7 +98,7 @@ public class SurpuncherClient implements ClientModInitializer {
                     Vec3d handPos = getHandPos(player, h, tickProgress, dispatcher);
                     matrices.translate(handPos.x, handPos.y, handPos.z);
                     Vec3d fistPos = fist.lerpPos(tickProgress).add(pos).add(0, player.getStandingEyeHeight(), 0);
-                    VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(RenderLayer.getLines()), new Vector3f(), fistPos.subtract(handPos), 0xFFFFFFFF);
+                    VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(RenderLayer.getLines()), new Vector3f(), fistPos.subtract(handPos), color);
                     matrices.pop();
                 }
                 matrices.pop();
