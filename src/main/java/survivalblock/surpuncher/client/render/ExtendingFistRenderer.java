@@ -231,11 +231,9 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         int arm = getArmHoldingRod(player) == Arm.RIGHT ? 1 : -1;
         if (dispatcher.gameOptions.getPerspective().isFirstPerson() && player == MinecraftClient.getInstance().player) {
             return player.getCameraPosVec(tickProgress)
-                    .add(dispatcher.camera.getProjection().getPosition(arm * 0.525F, -0.1F)
+                    .add(dispatcher.camera.getProjection().getPosition(arm * 0.525F, -1F)
                             .multiply(960.0F / dispatcher.gameOptions.getFov().getValue())
-                            .rotateY(angle * 0.5F)
-                            .rotateX(-angle * 0.7F))
-                    .subtract(0, 0.6, 0);
+                            .rotateX(-angle * 0.7F * arm));
         } else {
             float yaw = (MathHelper.lerp(tickProgress, player.lastBodyYaw, player.bodyYaw)) * MathHelper.RADIANS_PER_DEGREE;
 
