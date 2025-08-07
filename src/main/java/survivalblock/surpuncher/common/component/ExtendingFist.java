@@ -3,7 +3,10 @@ package survivalblock.surpuncher.common.component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
@@ -124,8 +127,25 @@ public class ExtendingFist implements GeoAnimatable {
         return new Box(pos.subtract(BOX_EXPAND_VALUE), pos.add(BOX_EXPAND_VALUE));
     }
 
-    public Box getHitbox() {
-        return new Box(this.relativePos.subtract(BOX_EXPAND_VALUE), this.relativePos.add(BOX_EXPAND_VALUE));
+    @Nullable
+    public EntityHitResult getEntityCollision(World world, Box box, PlayerEntity owner, Vec3d currentPosition, Vec3d nextPosition) {
+        return ProjectileUtil.getEntityCollision(
+                world,
+                owner,
+                currentPosition,
+                nextPosition,
+                box.stretch(this.getVelocity()).expand(1.0),
+                entity -> canHit(entity, owner),
+                ProjectileUtil.getToleranceMargin(owner)
+        );
+    }
+
+    protected boolean canHit(Entity entity, @Nullable Entity owner) {
+        if (!entity.canBeHitByProjectile()) {
+            return false;
+        } else {
+            return owner == null || !owner.isConnectedThroughVehicle(entity);
+        }
     }
 
     public Vec3d getVelocity() {

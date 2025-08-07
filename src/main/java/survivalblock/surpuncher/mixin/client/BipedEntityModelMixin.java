@@ -72,7 +72,7 @@ public class BipedEntityModelMixin {
         static {
             ArrayList<BipedEntityModel.ArmPose> list = new ArrayList<>(Arrays.asList(field_3404));
             int size = list.size();
-            surpuncher$fistPose = surpuncher$invokeInit("spud_slingers_cannon_pose", size, false);
+            surpuncher$fistPose = surpuncher$invokeInit("surpuncher$FistPose", size, false);
             list.add(surpuncher$fistPose);
             field_3404 = list.toArray(new BipedEntityModel.ArmPose[size + 1]);
         }

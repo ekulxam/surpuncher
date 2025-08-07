@@ -1,6 +1,7 @@
 package survivalblock.surpuncher.common.component;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,6 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -37,8 +39,32 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
 
     @Override
     public void tick() {
-        Iterator<ExtendingFist> itr = this.fists.iterator();
         World world = this.obj.getWorld();
+
+        if (world instanceof ServerWorld serverWorld && !this.fists.isEmpty()) {
+            Vec3d pos = this.obj.getEyePos();
+            DamageSource playerAttack = serverWorld.getDamageSources().playerAttack(this.obj);
+            this.fists.forEach(extendingFist -> {
+                Vec3d fistPos = extendingFist.relativePos.add(pos);
+                Vec3d velocity = extendingFist.getVelocity();
+                EntityHitResult entityHitResult = extendingFist.getEntityCollision(
+                        world, extendingFist.getHitbox(pos), this.obj, fistPos, fistPos.add(velocity));
+                if (entityHitResult != null) {
+                    Entity entity = entityHitResult.getEntity();
+                    entity.damage(serverWorld, playerAttack, 4);
+                    if (entity instanceof LivingEntity) {
+                        entity.addVelocity(velocity.multiply(1.5));
+                        if (entity instanceof ServerPlayerEntity serverPlayer) {
+                            serverPlayer.networkHandler.sendPacket(
+                                    new EntityVelocityUpdateS2CPacket(serverPlayer)
+                            );
+                        }
+                    }
+                }
+            });
+        }
+
+        Iterator<ExtendingFist> itr = this.fists.iterator();
         ExtendingFist fist;
         while (itr.hasNext()) {
             fist = itr.next();
@@ -47,37 +73,6 @@ public class ExtendingFistComponent implements CommonTickingComponent, AutoSynce
                 itr.remove();
                 this.markDirty();
             }
-        }
-        if (world instanceof ServerWorld serverWorld && !this.fists.isEmpty()) {
-            Vec3d pos = this.obj.getEyePos();
-            Map<Box, ExtendingFist> boxes = new HashMap<>();
-            this.fists.forEach(extendingFist ->
-                    boxes.put(extendingFist.getHitbox(pos), extendingFist)
-            );
-            DamageSource playerAttack = serverWorld.getDamageSources().playerAttack(this.obj);
-            serverWorld.iterateEntities().forEach(entity -> {
-                if (!(entity instanceof LivingEntity)) {
-                    return;
-                }
-                if (entity.equals(this.obj)) {
-                    return;
-                }
-                Box entityBox = entity.getBoundingBox();
-                for (Map.Entry<Box, ExtendingFist> entry : boxes.entrySet()) {
-                    if (!entry.getKey().intersects(entityBox)) {
-                        continue;
-                    }
-                    entity.damage(serverWorld, playerAttack, 4);
-                    Vec3d velocity = entry.getValue().getVelocity();
-                    entity.setVelocity(velocity);
-                    if (!(entity instanceof ServerPlayerEntity serverPlayer)) {
-                        continue;
-                    }
-                    serverPlayer.networkHandler.sendPacket(
-                            new EntityVelocityUpdateS2CPacket(serverPlayer)
-                    );
-                }
-            });
         }
         if (this.dirty) {
             this.dirty = false;

@@ -1,13 +1,17 @@
 package survivalblock.surpuncher.common.item;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ToolComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -63,5 +67,13 @@ public class ExtendingFistItem extends Item {
         return stack.getOrDefault(DataComponentTypes.DYED_COLOR,
                         SurpuncherItems.DEFAULT_DYE_COMPONENT)
                 .rgb();
+    }
+
+    @Override
+    public boolean canMine(ItemStack stack, BlockState state, World world, BlockPos pos, LivingEntity user) {
+        if (!super.canMine(stack, state, world, pos, user)) {
+            return false;
+        }
+        return !(user instanceof PlayerEntity playerEntity && playerEntity.getAbilities().creativeMode);
     }
 }
