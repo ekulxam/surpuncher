@@ -3,6 +3,7 @@ package survivalblock.surpuncher.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -12,6 +13,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
@@ -80,9 +82,20 @@ public class SurpuncherClient implements ClientModInitializer {
         });
     }
 
-    public static void updateFistState(ItemStack stack, ItemRenderState renderState) {
+    public static void updateFistState(ItemStack stack, ItemRenderState renderState, ItemDisplayContext displayContext) {
         if (stack.isOf(SurpuncherItems.EXTENDING_FIST)) {
-            renderState.surpuncher$setShouldRenderFist(true);
+            boolean renderFist;
+            if (displayContext == ItemDisplayContext.GUI) {
+                renderFist = true;
+            } else {
+                ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+                if (clientPlayer == null) {
+                    renderFist = true;
+                } else {
+                    renderFist = !clientPlayer.getItemCooldownManager().isCoolingDown(stack);
+                }
+            }
+            renderState.surpuncher$setShouldRenderFist(renderFist);
             renderState.surpuncher$setFistColor(ExtendingFistItem.getColor(stack));
             return;
         }

@@ -3,6 +3,7 @@ package survivalblock.surpuncher.mixin.client;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import survivalblock.surpuncher.client.render.ExtendingFistRenderer;
 import survivalblock.surpuncher.client.render.injected_interface.FistItemRenderState;
 
+@Debug(export = true)
 @Mixin(ItemRenderState.class)
 public class ItemRenderStateMixin implements FistItemRenderState {
 
@@ -46,5 +48,11 @@ public class ItemRenderStateMixin implements FistItemRenderState {
             return;
         }
         ExtendingFistRenderer.INSTANCE.renderFromStack((ItemRenderState) (Object) this, matrices, vertexConsumers, light);
+    }
+
+    @Inject(method = "clear", at = @At("RETURN"))
+    private void clearSurpuncherData(CallbackInfo ci) {
+        this.surpuncher$fistColor = 0;
+        this.surpuncher$renderFist = false;
     }
 }
