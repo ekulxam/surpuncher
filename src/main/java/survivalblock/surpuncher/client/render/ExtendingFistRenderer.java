@@ -187,13 +187,19 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
                 Vec3d fistPos = fist.lerpPos(tickProgress).add(pos);
                 Vec3d direction = fistPos.subtract(handPos);
                 Vec3d seg = direction.multiply(INVERSE_SEGMENTS);
+
+                float pitch = fist.getPitch();
+                float yaw = fist.getYaw();
+
                 float angle = fastInvCos((float) (seg.length() * 0.5), ExtendingFist.SEGMENT_LENGTH) * MathHelper.DEGREES_PER_RADIAN;
+
                 for (int up = 0; up < 2; up++) {
                     List<Vec3d> vec3ds = new ArrayList<>();
+                    Vec3d angled = Vec3d.fromPolar(pitch + (up == 0 ? -angle : angle), yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
                     for (int i = 0; i < ExtendingFist.SEGMENTS; i++) {
                         Vec3d thisSegment = seg.multiply(i).add(handPos);
                         vec3ds.add(thisSegment);
-                        vec3ds.add(Vec3d.fromPolar(fist.getPitch() + (up == 0 ? -angle : angle), fist.getYaw()).multiply(ExtendingFist.SEGMENT_LENGTH).add(thisSegment));
+                        vec3ds.add(angled.add(thisSegment));
                     }
                     vec3ds.add(fistPos);
                     renderPolygonalChain(vec3ds, matrices, vertexConsumerProvider, color);

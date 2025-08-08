@@ -46,17 +46,14 @@ public class BipedEntityModelMixin {
         float f = MathHelper.sin(swingProgress * (float) Math.PI);
         float g = MathHelper.sin((1.0F - (1.0F - swingProgress) * (1.0F - swingProgress)) * (float) Math.PI);
         float h = (float) -Math.PI / (2.25F);
+        arm.roll = 0.0F;
         if (right) {
-            arm.roll = 0.0F;
             arm.yaw = -(0.1F - f * 0.6F);
-            arm.pitch = h;
-            arm.pitch += f * 1.2F - g * 0.4F;
         } else {
-            arm.roll = 0.0F;
             arm.yaw = 0.1F - f * 0.6F;
-            arm.pitch = h;
-            arm.pitch += f * 1.2F - g * 0.4F;
         }
+        arm.pitch = h;
+        arm.pitch += f * 1.2F - g * 0.4F;
     }
 
     @Mixin(BipedEntityModel.ArmPose.class)
@@ -64,6 +61,7 @@ public class BipedEntityModelMixin {
 
         @Shadow @Final private static BipedEntityModel.ArmPose[] field_3404;
 
+        @SuppressWarnings("SameParameterValue")
         @Invoker("<init>")
         static BipedEntityModel.ArmPose surpuncher$invokeInit(String name, int id, final boolean twoHanded) {
             throw new UnsupportedOperationException();
