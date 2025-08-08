@@ -3,7 +3,6 @@ package survivalblock.surpuncher.client.render;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,8 +13,6 @@ import net.minecraft.client.render.model.json.Transformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
@@ -31,13 +28,15 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 import survivalblock.surpuncher.common.Surpuncher;
 import survivalblock.surpuncher.common.component.ExtendingFist;
 import survivalblock.surpuncher.common.init.SurpuncherEntityComponents;
-import survivalblock.surpuncher.common.init.SurpuncherItems;
 import survivalblock.surpuncher.common.item.ExtendingFistItem;
 import survivalblock.surpuncher.mixin.client.ItemRenderStateAccessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static survivalblock.surpuncher.common.Surpuncher.fastInvCos;
 import static survivalblock.surpuncher.common.component.ExtendingFist.BOX_EXPAND_VALUE;
+import static survivalblock.surpuncher.common.component.ExtendingFist.INVERSE_SEGMENTS;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, GeoRenderState>, WorldRenderEvents.AfterEntities {
@@ -141,6 +140,7 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         Vec3d cameraPos = context.camera().getCameraPos();
         matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         EntityRenderDispatcher dispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        //noinspection resource
         ClientWorld world = context.world();
         world.getPlayers().forEach(player -> {
             float tickProgress = MinecraftClient.getInstance()
@@ -184,23 +184,28 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
                 }
                 matrices.pop();
 
-                matrices.push();
-                matrices.translate(handPos.x, handPos.y, handPos.z);
                 Vec3d fistPos = fist.lerpPos(tickProgress).add(pos);
-                VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(RenderLayer.getLines()), new Vector3f(), fistPos.subtract(handPos), color);
-                matrices.pop();
+                Vec3d direction = fistPos.subtract(handPos);
+                Vec3d seg = direction.multiply(INVERSE_SEGMENTS);
+                float angle = fastInvCos((float) (seg.length() * 0.5), ExtendingFist.SEGMENT_LENGTH) * MathHelper.DEGREES_PER_RADIAN;
+                for (int up = 0; up < 2; up++) {
+                    List<Vec3d> vec3ds = new ArrayList<>();
+                    for (int i = 0; i < ExtendingFist.SEGMENTS; i++) {
+                        Vec3d thisSegment = seg.multiply(i).add(handPos);
+                        vec3ds.add(thisSegment);
+                        vec3ds.add(Vec3d.fromPolar(fist.getPitch() + (up == 0 ? -angle : angle), fist.getYaw()).multiply(ExtendingFist.SEGMENT_LENGTH).add(thisSegment));
+                    }
+                    vec3ds.add(fistPos);
+                    renderPolygonalChain(vec3ds, matrices, vertexConsumerProvider, color);
+                }
             }
             matrices.pop();
         });
         matrices.pop();
     }
 
-    public static Arm getArmHoldingRod(PlayerEntity player) {
-        return player.getMainHandStack().isOf(SurpuncherItems.EXTENDING_FIST) ? player.getMainArm() : player.getMainArm().getOpposite();
-    }
-
     public static Vec3d getHandPos(PlayerEntity player, float angle, float tickProgress, EntityRenderDispatcher dispatcher) {
-        int arm = getArmHoldingRod(player) == Arm.RIGHT ? 1 : -1;
+        int arm = ExtendingFistItem.getArmHoldingFist(player) == Arm.RIGHT ? 1 : -1;
         if (dispatcher.gameOptions.getPerspective().isFirstPerson() && player == MinecraftClient.getInstance().player) {
             return player.getCameraPosVec(tickProgress)
                     .add(dispatcher.camera.getProjection().getPosition(arm * 0.525F, -1F)
@@ -218,6 +223,22 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
             float verticalOffset = player.isInSneakingPose() ? -0.1875F : 0.0F;
             return player.getCameraPosVec(tickProgress)
                     .add(-cosYaw * sideOffset - sinYaw * forwardOffset, verticalOffset - 0.45F * scale, -sinYaw * sideOffset + cosYaw * forwardOffset);
+        }
+    }
+
+    public static void renderPolygonalChain(List<Vec3d> positions, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int color) {
+        if (positions.size() <= 1) {
+            return;
+        }
+        Vec3d current;
+        Vec3d previous = positions.getFirst();
+        for (int i = 1; i < positions.size(); i++) {
+            current = positions.get(i);
+            matrices.push();
+            matrices.translate(previous.x, previous.y, previous.z);
+            VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(RenderLayer.getLines()), new Vector3f(), current.subtract(previous), color);
+            matrices.pop();
+            previous = current;
         }
     }
 

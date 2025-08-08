@@ -29,6 +29,16 @@ public class ExtendingFist implements GeoAnimatable {
     public static final double VELOCITY_MULTIPLIER = 2.5;
     public static final double BOX_EXPAND_VALUE = 0.4;
 
+    public static final int SEGMENTS = 20;
+    public static final float INVERSE_SEGMENTS = 1f / SEGMENTS;
+    /*
+    How to calculate SEGMENT_LENGTH
+    Take the max life and multiply by 0.5 to get half life (when the fist is farthest from the player)
+    Multiply by another 0.5 because there are two real lines per "segment"
+    There is no need to add an offset because relativePos max length should always be greater than fistPos - handPos
+     */
+    public static final float SEGMENT_LENGTH = (float) (DEFAULT_MAX_LIFE * 0.25 * VELOCITY_MULTIPLIER * INVERSE_SEGMENTS);
+
     public static final Codec<ExtendingFist> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                             Vec3d.CODEC.fieldOf("velocity").forGetter(extendingFist -> extendingFist.velocity),

@@ -2,7 +2,6 @@ package survivalblock.surpuncher.common.item;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ToolComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -75,5 +75,9 @@ public class ExtendingFistItem extends Item {
             return false;
         }
         return !(user instanceof PlayerEntity playerEntity && playerEntity.getAbilities().creativeMode);
+    }
+
+    public static Arm getArmHoldingFist(PlayerEntity player) {
+        return player.getMainHandStack().isOf(SurpuncherItems.EXTENDING_FIST) ? player.getMainArm() : player.getMainArm().getOpposite();
     }
 }
