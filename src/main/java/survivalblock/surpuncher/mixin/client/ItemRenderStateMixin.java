@@ -7,7 +7,6 @@ import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,7 +18,6 @@ import survivalblock.surpuncher.client.render.injected_interface.FistItemRenderS
 import survivalblock.surpuncher.common.init.SurpuncherItems;
 import survivalblock.surpuncher.common.item.ExtendingFistItem;
 
-@Debug(export = true)
 @Mixin(ItemRenderState.class)
 public abstract class ItemRenderStateMixin implements FistItemRenderState {
 
