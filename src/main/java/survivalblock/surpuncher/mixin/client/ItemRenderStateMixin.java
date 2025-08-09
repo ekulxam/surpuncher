@@ -5,8 +5,11 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -64,31 +67,33 @@ public abstract class ItemRenderStateMixin implements FistItemRenderState {
     }
 
     @Override
-    public void surpuncher$updateFistState(ItemStack stack, ItemDisplayContext displayContext) {
-        if (stack.isOf(SurpuncherItems.EXTENDING_FIST)) {
-            boolean renderFist;
-            if (displayContext == ItemDisplayContext.GUI) {
-                renderFist = true;
-            } else {
-                ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-                if (clientPlayer == null) {
-                    renderFist = true;
-                } else {
-                    renderFist = !clientPlayer.getItemCooldownManager().isCoolingDown(stack);
-                }
-            }
-            this.surpuncher$setShouldRenderFist(renderFist);
-            this.addModelKey(renderFist);
-            if (renderFist) {
-                int color = ExtendingFistItem.getColor(stack);
-                this.surpuncher$setFistColor(color);
-                this.addModelKey(color);
-            } else {
-                this.surpuncher$setFistColor(0);
-            }
+    public void surpuncher$updateFistState(ItemStack stack, ItemDisplayContext displayContext, @Nullable PlayerEntity player) {
+        if (!stack.isOf(SurpuncherItems.EXTENDING_FIST)) {
+            this.surpuncher$setShouldRenderFist(false);
+            this.surpuncher$setFistColor(0);
             return;
         }
-        this.surpuncher$setShouldRenderFist(false);
-        this.surpuncher$setFistColor(0);
+        if (player == null) {
+            player = MinecraftClient.getInstance().player;
+        }
+        boolean renderFist;
+        if (displayContext == ItemDisplayContext.GUI) {
+            renderFist = true;
+        } else {
+            if (player == null) {
+                renderFist = true;
+            } else {
+                renderFist = !player.getItemCooldownManager().isCoolingDown(stack);
+            }
+        }
+        this.surpuncher$setShouldRenderFist(renderFist);
+        this.addModelKey(renderFist);
+        if (renderFist) {
+            int color = ExtendingFistItem.getColor(stack);
+            this.surpuncher$setFistColor(color);
+            this.addModelKey(color);
+        } else {
+            this.surpuncher$setFistColor(0);
+        }
     }
 }

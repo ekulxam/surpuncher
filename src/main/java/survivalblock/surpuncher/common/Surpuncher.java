@@ -2,11 +2,13 @@ package survivalblock.surpuncher.common;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import survivalblock.surpuncher.common.init.SurpuncherItems;
+import survivalblock.surpuncher.common.networking.ArbitraryCooldownUpdateS2CPayload;
 
 public class Surpuncher implements ModInitializer {
 	
@@ -17,6 +19,8 @@ public class Surpuncher implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		SurpuncherItems.init();
+
+		PayloadTypeRegistry.playS2C().register(ArbitraryCooldownUpdateS2CPayload.ID, ArbitraryCooldownUpdateS2CPayload.PACKET_CODEC);
 	}
 
 	public static Identifier id(String path) {

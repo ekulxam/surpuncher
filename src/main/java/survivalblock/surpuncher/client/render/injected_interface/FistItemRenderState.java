@@ -1,7 +1,9 @@
 package survivalblock.surpuncher.client.render.injected_interface;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface FistItemRenderState {
 
@@ -21,7 +23,7 @@ public interface FistItemRenderState {
         throw new UnsupportedOperationException("Injected interface");
     }
 
-    default void surpuncher$updateFistState(ItemStack stack, ItemDisplayContext displayContext) {
+    default void surpuncher$updateFistState(ItemStack stack, ItemDisplayContext displayContext, @Nullable PlayerEntity player) {
         throw new UnsupportedOperationException("Injected interface");
     }
 }

@@ -3,6 +3,7 @@ package survivalblock.surpuncher.mixin.client;
 import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -16,6 +17,6 @@ public class ItemModelManagerMixin {
 
     @Inject(method = "update", at = @At("HEAD"))
     private void updateFist(ItemRenderState renderState, ItemStack stack, ItemDisplayContext displayContext, World world, LivingEntity entity, int seed, CallbackInfo ci) {
-        renderState.surpuncher$updateFistState(stack, displayContext);
+        renderState.surpuncher$updateFistState(stack, displayContext, entity instanceof PlayerEntity player ? player : null);
     }
 }

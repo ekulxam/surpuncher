@@ -3,6 +3,7 @@
   "package": "survivalblock.surpuncher.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerItemCooldownManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

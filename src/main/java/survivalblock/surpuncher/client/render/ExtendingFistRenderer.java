@@ -43,6 +43,8 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
 
     public static final ExtendingFistRenderer INSTANCE = new ExtendingFistRenderer();
 
+    public static final RenderLayer LINES = RenderLayer.getLines();
+
     protected ExtendingFistRenderer() {
     }
 
@@ -169,7 +171,7 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
                         matrices.push();
                         Vec3d relativePos = fist.lerpPos(tickProgress);
                         matrices.translate(relativePos.x, relativePos.y, relativePos.z);
-                        VertexConsumer lines = vertexConsumerProvider.getBuffer(RenderLayer.getLines());
+                        VertexConsumer lines = vertexConsumerProvider.getBuffer(LINES);
                         VertexRendering.drawBox(
                                 matrices, lines,
                                 -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE,
@@ -193,13 +195,15 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
 
                 float angle = fastInvCos((float) (seg.length() * 0.5), ExtendingFist.SEGMENT_LENGTH) * MathHelper.DEGREES_PER_RADIAN;
 
-                for (int up = 0; up < 2; up++) {
+                Vec3d up = Vec3d.fromPolar(pitch + angle, yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
+                Vec3d down = Vec3d.fromPolar(pitch - angle, yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
+
+                for (int i = 0; i < 2; i++) {
                     List<Vec3d> vec3ds = new ArrayList<>();
-                    Vec3d angled = Vec3d.fromPolar(pitch + (up == 0 ? -angle : angle), yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
-                    for (int i = 0; i < ExtendingFist.SEGMENTS; i++) {
-                        Vec3d thisSegment = seg.multiply(i).add(handPos);
+                    for (int j = 0; j < ExtendingFist.SEGMENTS; j++) {
+                        Vec3d thisSegment = seg.multiply(j).add(handPos);
                         vec3ds.add(thisSegment);
-                        vec3ds.add(angled.add(thisSegment));
+                        vec3ds.add((i == 0 ? down : up).add(thisSegment));
                     }
                     vec3ds.add(fistPos);
                     renderPolygonalChain(vec3ds, matrices, vertexConsumerProvider, color);
@@ -242,7 +246,7 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
             current = positions.get(i);
             matrices.push();
             matrices.translate(previous.x, previous.y, previous.z);
-            VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(RenderLayer.getLines()), new Vector3f(), current.subtract(previous), color);
+            VertexRendering.drawVector(matrices, vertexConsumerProvider.getBuffer(LINES), new Vector3f(), current.subtract(previous), color);
             matrices.pop();
             previous = current;
         }
