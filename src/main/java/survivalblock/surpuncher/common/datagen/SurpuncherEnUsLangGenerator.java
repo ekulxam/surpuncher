@@ -21,6 +21,6 @@ public class SurpuncherEnUsLangGenerator extends FabricLanguageProvider {
 
         translationBuilder.addEnchantment(SurpuncherEnchantments.FLURRY, "Flurry");
 
-        translationBuilder.add(SurpuncherGameRules.SYNC_COOLDOWNS.getTranslationKey(), "Surpuncher: Sync Item Cooldown Updates To All Clients");
+        translationBuilder.add(SurpuncherGameRules.SYNC_COOLDOWNS.getTranslationKey(), "Surpuncher: Sync Item Cooldown Updates To Other Clients");
     }
 }

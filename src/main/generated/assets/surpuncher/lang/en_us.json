@@ -1,4 +1,5 @@
 {
   "enchantment.surpuncher.flurry": "Flurry",
+  "gamerule.surpuncher:syncCooldownsToOtherClients": "Surpuncher: Sync Item Cooldown Updates To Other Clients",
   "item.surpuncher.extending_fist": "Extending Fist"
 }

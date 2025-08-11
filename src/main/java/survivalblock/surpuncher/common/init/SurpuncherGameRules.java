@@ -6,7 +6,7 @@ import net.minecraft.world.GameRules;
 
 public class SurpuncherGameRules {
 
-    public static final GameRules.Key<GameRules.BooleanRule> SYNC_COOLDOWNS = registerBool("surpuncherSyncCooldownsToAllClients", true);
+    public static final GameRules.Key<GameRules.BooleanRule> SYNC_COOLDOWNS = registerBool("surpuncher:syncCooldownsToOtherClients", true);
 
     public static GameRules.Key<GameRules.BooleanRule> registerBool(String name, boolean defaultValue) {
         return register(name, GameRuleFactory.createBooleanRule(defaultValue));

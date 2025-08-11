@@ -20,6 +20,7 @@ public abstract class ServerItemCooldownManagerMixin {
 
     @Shadow @Final private ServerPlayerEntity player;
 
+    @SuppressWarnings("MixinAnnotationTarget")
     @WrapOperation(method = "*", at = @At(value = "NEW", target = "(Lnet/minecraft/util/Identifier;I)Lnet/minecraft/network/packet/s2c/play/CooldownUpdateS2CPacket;"))
     private CooldownUpdateS2CPacket onCooldownUpdate(Identifier groupId, int cooldown, Operation<CooldownUpdateS2CPacket> original) {
         CooldownUpdateS2CPacket value = original.call(groupId, cooldown);
