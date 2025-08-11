@@ -56,7 +56,7 @@ public class BipedEntityModelMixin {
         arm.pitch += f * 1.2F - g * 0.4F;
     }
 
-    @Mixin(BipedEntityModel.ArmPose.class)
+    @Mixin(value = BipedEntityModel.ArmPose.class, priority = 364000)
     public static class ArmPoseMixin {
 
         @Shadow @Final private static BipedEntityModel.ArmPose[] field_3404;
@@ -70,7 +70,7 @@ public class BipedEntityModelMixin {
         static {
             ArrayList<BipedEntityModel.ArmPose> list = new ArrayList<>(Arrays.asList(field_3404));
             int size = list.size();
-            surpuncher$fistPose = surpuncher$invokeInit("surpuncher$FistPose", size, false);
+            surpuncher$fistPose = surpuncher$invokeInit("surpuncher$FIST_POSE", size, false);
             list.add(surpuncher$fistPose);
             field_3404 = list.toArray(new BipedEntityModel.ArmPose[size + 1]);
         }
