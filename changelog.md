@@ -1,3 +1,2 @@
-Surpuncher 1.0.1+1.21.8
-- Cleanup enum shenanigans
-- Surpuncher now syncs item cooldowns to other players if the gamerule `surpuncher:syncCooldownsToOtherClients` is enabled
+Surpuncher 1.0.2+1.21.8
+- I have no idea what I'm doing, but attempt modrinth publishing? I think
