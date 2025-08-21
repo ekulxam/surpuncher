@@ -3,6 +3,7 @@ package survivalblock.surpuncher.client.render;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -89,9 +90,7 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         matrices.peek().translate(0.5F, 0.5F, 0.5F);
     }
 
-    public void applyEntityLikeTransforms(ExtendingFist fist, MatrixStack matrices, float tickProgress) {
-        Vec3d relativePos = fist.lerpPos(tickProgress);
-        matrices.translate(relativePos.x, relativePos.y, relativePos.z);
+    public void applyEntityLikeRotations(ExtendingFist fist, MatrixStack matrices, float tickProgress) {
         matrices.multiply(new Quaternionf()
                 .rotationYXZ(-fist.getYaw() * MathHelper.RADIANS_PER_DEGREE + MathHelper.PI, // rotate by an extra pi radians because the model is backwards
                         -fist.getPitch() * MathHelper.RADIANS_PER_DEGREE,
@@ -141,76 +140,87 @@ public class ExtendingFistRenderer implements GeoRenderer<ExtendingFist, Void, G
         matrices.push();
         Vec3d cameraPos = context.camera().getCameraPos();
         matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
         EntityRenderDispatcher dispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
         //noinspection resource
         ClientWorld world = context.world();
-        world.getPlayers().forEach(player -> {
+
+        for (AbstractClientPlayerEntity player : world.getPlayers()) {
+
+            List<ExtendingFist> fists = SurpuncherEntityComponents.EXTENDING_FIST.get(player).getImmutableFists();
+            if (fists == null || fists.isEmpty()) {
+                continue;
+            }
+
             float tickProgress = MinecraftClient.getInstance()
                     .getRenderTickCounter()
                     .getTickProgress(!world.getTickManager().shouldSkipTick(player));
-            List<ExtendingFist> fists = SurpuncherEntityComponents.EXTENDING_FIST.get(player).getImmutableFists();
-            if (fists == null || fists.isEmpty()) {
-                return;
-            }
-            matrices.push();
+
             Vec3d pos = player.getLerpedPos(tickProgress).add(0, player.getStandingEyeHeight(), 0);
             float swingProgress = player.getHandSwingProgress(tickProgress);
             float h = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float)Math.PI);
             Vec3d handPos = getHandPos(player, h, tickProgress, dispatcher);
-            for (ExtendingFist fist : fists) {
-                matrices.push();
-                int color = ExtendingFistRenderer.INSTANCE.getRenderColor(fist, null, tickProgress);
-                matrices.translate(pos.x, pos.y, pos.z);
-                {
-                    matrices.push();
-                    ExtendingFistRenderer.INSTANCE.applyEntityLikeTransforms(fist, matrices, tickProgress);
-                    ExtendingFistRenderer.INSTANCE.render(fist, matrices, vertexConsumerProvider, dispatcher.getLight(player, tickProgress), tickProgress);
-                    matrices.pop();
 
-                    if (dispatcher.shouldRenderHitboxes()) {
-                        matrices.push();
-                        Vec3d relativePos = fist.lerpPos(tickProgress);
-                        matrices.translate(relativePos.x, relativePos.y, relativePos.z);
-                        VertexConsumer lines = vertexConsumerProvider.getBuffer(LINES);
-                        VertexRendering.drawBox(
-                                matrices, lines,
-                                -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE,
-                                BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE,
-                                ColorHelper.getRedFloat(color),
-                                ColorHelper.getGreenFloat(color),
-                                ColorHelper.getBlueFloat(color),
-                                ColorHelper.getAlphaFloat(color)
-                        );
-                        matrices.pop();
-                    }
-                }
+            for (ExtendingFist fist : fists) {
+
+                int color = ExtendingFistRenderer.INSTANCE.getRenderColor(fist, null, tickProgress);
+                Vec3d fistPos = fist.lerpPos(tickProgress).add(pos);
+
+                matrices.push();
+                matrices.translate(fistPos.x, fistPos.y, fistPos.z);
+
+                matrices.push();
+                ExtendingFistRenderer.INSTANCE.applyEntityLikeRotations(fist, matrices, tickProgress);
+                ExtendingFistRenderer.INSTANCE.render(fist, matrices, vertexConsumerProvider, dispatcher.getLight(player, tickProgress), tickProgress);
                 matrices.pop();
 
-                Vec3d fistPos = fist.lerpPos(tickProgress).add(pos);
+                if (dispatcher.shouldRenderHitboxes()) {
+                    VertexConsumer lines = vertexConsumerProvider.getBuffer(LINES);
+                    VertexRendering.drawBox(
+                            matrices, lines,
+                            -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE, -BOX_EXPAND_VALUE,
+                            BOX_EXPAND_VALUE, BOX_EXPAND_VALUE, BOX_EXPAND_VALUE,
+                            ColorHelper.getRedFloat(color),
+                            ColorHelper.getGreenFloat(color),
+                            ColorHelper.getBlueFloat(color),
+                            ColorHelper.getAlphaFloat(color)
+                    );
+                }
+
+                matrices.pop();
+
                 Vec3d direction = fistPos.subtract(handPos);
                 Vec3d seg = direction.multiply(INVERSE_SEGMENTS);
+
+                float angle = fastInvCos((float) (seg.length() * 0.5), ExtendingFist.SEGMENT_LENGTH) * MathHelper.DEGREES_PER_RADIAN;
+
+                if (Float.isNaN(angle)) {
+                    renderPolygonalChain(List.of(handPos, fistPos), matrices, vertexConsumerProvider, color);
+                    continue;
+                }
 
                 float pitch = fist.getPitch();
                 float yaw = fist.getYaw();
 
-                float angle = fastInvCos((float) (seg.length() * 0.5), ExtendingFist.SEGMENT_LENGTH) * MathHelper.DEGREES_PER_RADIAN;
-
                 Vec3d up = Vec3d.fromPolar(pitch + angle, yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
                 Vec3d down = Vec3d.fromPolar(pitch - angle, yaw).multiply(ExtendingFist.SEGMENT_LENGTH);
 
-                for (int i = 0; i < 2; i++) {
-                    List<Vec3d> vec3ds = new ArrayList<>();
-                    for (int j = 0; j < ExtendingFist.SEGMENTS; j++) {
-                        Vec3d thisSegment = seg.multiply(j).add(handPos);
-                        vec3ds.add(thisSegment);
-                        vec3ds.add((i == 0 ? down : up).add(thisSegment));
-                    }
-                    vec3ds.add(fistPos);
-                    renderPolygonalChain(vec3ds, matrices, vertexConsumerProvider, color);
+                List<Vec3d> vec3ds = new ArrayList<>();
+                vec3ds.add(handPos);
+                for (int j = 0; j < ExtendingFist.SEGMENTS; j++) {
+                    Vec3d thisSegment = seg.multiply(j).add(handPos);
+                    vec3ds.add((j % 2 == 0 ? down : up).add(thisSegment));
                 }
+                vec3ds.add(fistPos);
+                for (int j = ExtendingFist.SEGMENTS - 1; j >= 0; j--) {
+                    Vec3d thisSegment = seg.multiply(j).add(handPos);
+                    vec3ds.add((j % 2 == 0 ? up : down).add(thisSegment));
+                }
+                vec3ds.add(handPos);
+                renderPolygonalChain(vec3ds, matrices, vertexConsumerProvider, color);
             }
-            matrices.pop();
-        });
+        }
+
         matrices.pop();
     }
 
