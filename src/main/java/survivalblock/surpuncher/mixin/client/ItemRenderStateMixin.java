@@ -73,9 +73,6 @@ public abstract class ItemRenderStateMixin implements FistItemRenderState {
             this.surpuncher$setFistColor(0);
             return;
         }
-        if (player == null) {
-            player = MinecraftClient.getInstance().player;
-        }
         boolean renderFist;
         if (displayContext == ItemDisplayContext.GUI) {
             renderFist = true;
