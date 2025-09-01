@@ -35,7 +35,7 @@ public class ExtendingFistItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (!world.isClient()) {
+        if (world.isClient()) {
             return ActionResult.SUCCESS;
         }
         ItemStack stack = user.getStackInHand(hand);

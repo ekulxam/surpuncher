@@ -1,2 +1,2 @@
-Surpuncher 1.0.6+1.21.8
-- Increment use stat on usage, allow for fist to be damaged
+Surpuncher 1.0.7+1.21.8
+- Fixed bug where extending fists only activated on the client
